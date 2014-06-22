@@ -5,14 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".BirdApplication"
+        android:name="com.nedeljko.bird.app.BirdApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.nedeljko.bird.app.activities.HomeActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +25,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="app.bird.nedeljko.com"
-                    android:scheme="http" />
+                    android:host="auth"
+                    android:scheme="bird" />
             </intent-filter>
         </activity>
     </application>

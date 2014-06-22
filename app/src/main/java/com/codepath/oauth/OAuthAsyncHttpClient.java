@@ -143,7 +143,7 @@ public class OAuthAsyncHttpClient extends AsyncHttpClient {
         } else if (accessToken == null) {
         	throw new OAuthException("Cannot send unauthenticated requests for " + apiClass.getSimpleName() + " client. Please attach an access token!");
         }
-    	
+
     }
     
     // Defines the interface handler for different token handlers

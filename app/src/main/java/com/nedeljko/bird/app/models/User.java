@@ -12,13 +12,15 @@ public class User {
     public User(JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("name");
-            mProfileImageUrl = jsonObject.getString("profile_image_url");
+            mProfileImageUrl = jsonObject.getString("profile_image_url").replace("normal", "bigger");
             mRemoteId = jsonObject.getInt("id");
             mScreenName = jsonObject.getString("screen_name");
         } catch (JSONException jsonException) {
             System.out.println("Exception creating User from JSON response: " + jsonException);
         }
     }
+
+    //region Getters and Setters
 
     public String getName() {
         return mName;
@@ -51,4 +53,6 @@ public class User {
     public void setScreenName(String screenName) {
         mScreenName = screenName;
     }
+
+    //endregion
 }

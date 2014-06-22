@@ -25,4 +25,5 @@ dependencies {
     compile files('libs/codepath-utils.jar')
     compile files('libs/scribe-codepath.jar')
     compile 'com.android.support:support-v4:+'
+    compile files('libs/android-async-http-1.4.3.jar')
 }

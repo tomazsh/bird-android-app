@@ -17,20 +17,23 @@ public class Tweet {
     public Tweet(JSONObject jsonObject) {
         try {
             final String TWITTER_DATE_FORMAT = "EEE MMM dd HH:mm:ss Z yyyy";
-            SimpleDateFormat dateFormat = new SimpleDateFormat(TWITTER_DATE_FORMAT, Locale.getDefault());
+            SimpleDateFormat dateFormat =
+                    new SimpleDateFormat(TWITTER_DATE_FORMAT, Locale.getDefault());
             try {
                 mCreatedAt = dateFormat.parse(jsonObject.getString("created_at"));
             } catch (ParseException parseException) {
-                System.out.println("Exception parsing date from JSON response: " + parseException);
+                parseException.printStackTrace();
             }
 
             mRemoteId = jsonObject.getInt("id");
             mText = jsonObject.getString("text");
             mUser = new User(jsonObject.getJSONObject("user"));
         } catch (JSONException jsonException) {
-            System.out.println("Exception creating Tweet from JSON response: " + jsonException);
+            jsonException.printStackTrace();
         }
     }
+
+    //region Getters and Setters
 
     public int getRemoteId() {
         return mRemoteId;
@@ -62,5 +65,12 @@ public class Tweet {
 
     public void setUser(User user) {
         mUser = user;
+    }
+
+    //endregion
+
+    @Override
+    public String toString() {
+        return mText;
     }
 }
