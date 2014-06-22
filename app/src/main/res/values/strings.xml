@@ -4,24 +4,23 @@
     <string name="app_name">Bird</string>
     <string name="compose_action_title">Compose new Tweet</string>
     <string name="title_activity_home">Home</string>
-
     <string name="login_required_title">Sign in to Twitter</string>
-    <string name="login_required_message">
-        In order to user Bird, you have to sign in to Twitter.
-        Bird will never store your password.
-    </string>
+    <string name="login_required_message">In order to user Bird, you have to sign in to Twitter.
+        Bird will never store your password.</string>
     <string name="network_error_title">Network Error</string>
-    <string name="network_error_message">
-        There seems to be problem accessing Twitter.
-        Make sure you are connected to the network and try again.
-    </string>
+    <string name="network_error_message">There seems to be problem accessing Twitter.
+        Make sure you are connected to the network and try again.</string>
     <string name="no_tweets_title">No Tweets</string>
-    <string name="no_tweets_message">
-        Sorry, no tweets were found in the timeline.
-        Try following someone on Twitter.
-    </string>
-
+    <string name="no_tweets_message">Sorry, no tweets were found in the timeline.
+        Try following someone on Twitter.</string>
     <string name="login_action_title">Log in</string>
     <string name="try_again_action_title">Try again</string>
+
+    <string name="title_activity_tweet_compose">Compose New Tweet</string>
+    <string name="tweet_action_title">Tweet</string>
+
+    <string name="whats_on_your_mind_hint">What’s on your mind?</string>
+    <string name="tweet_post_error_message">There was an error while trying to post your tweet.
+        Please try again later.</string>
 
 </resources>

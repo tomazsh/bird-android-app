@@ -3,18 +3,27 @@ package com.nedeljko.bird.app.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Tweet {
+public class Tweet implements Serializable {
     private Date mCreatedAt;
     private int mRemoteId;
     private String mText;
     private User mUser;
 
+    public Tweet() {
+
+    }
+
     public Tweet(JSONObject jsonObject) {
+        update(jsonObject);
+    }
+
+    public void update(JSONObject jsonObject) {
         try {
             final String TWITTER_DATE_FORMAT = "EEE MMM dd HH:mm:ss Z yyyy";
             SimpleDateFormat dateFormat =
@@ -27,7 +36,13 @@ public class Tweet {
 
             mRemoteId = jsonObject.getInt("id");
             mText = jsonObject.getString("text");
-            mUser = new User(jsonObject.getJSONObject("user"));
+
+            JSONObject userObject = jsonObject.getJSONObject("user");
+            if (mUser == null) {
+                mUser = new User(userObject);
+            } else {
+                mUser.update(userObject);
+            }
         } catch (JSONException jsonException) {
             jsonException.printStackTrace();
         }

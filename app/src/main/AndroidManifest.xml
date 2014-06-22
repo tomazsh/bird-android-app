@@ -29,6 +29,11 @@
                     android:scheme="bird" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.nedeljko.bird.app.activities.TweetComposeActivity"
+            android:label="@string/title_activity_tweet_compose"
+            android:parentActivityName="com.nedeljko.bird.app.activities.HomeActivity" >
+        </activity>
     </application>
 
 </manifest>

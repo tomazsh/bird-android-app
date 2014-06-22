@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.nedeljko.bird.app.activities.TweetComposeActivity" >
+    
+    <item android:id="@+id/send_action_item"
+        android:title="@string/tweet_action_title"
+        android:icon="@android:drawable/ic_menu_send"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom" />
+
+</menu>

@@ -1,15 +1,10 @@
 package com.nedeljko.bird.app.viewmodels;
 
-import android.content.Context;
-import android.widget.ArrayAdapter;
-
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.nedeljko.bird.app.BirdApplication;
 import com.nedeljko.bird.app.helpers.TwitterClient;
 import com.nedeljko.bird.app.interfaces.TimelineViewModelListener;
 import com.nedeljko.bird.app.models.Tweet;
 
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +38,10 @@ public class HomeViewModel {
     //endregion
 
     //region Timeline
+
+    public void insertTweet(Tweet tweet) {
+        mTweets.add(0, tweet);
+    }
 
     public void loadNewerTimelinePage() {
         loadTimeline(true, false);

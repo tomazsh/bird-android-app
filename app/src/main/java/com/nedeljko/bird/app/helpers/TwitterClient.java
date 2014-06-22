@@ -30,4 +30,11 @@ public class TwitterClient extends OAuthBaseClient {
         parameters.put("maxId", Integer.toString(maxId));
         client.get(url, parameters, handler);
     }
+
+    public void postTweet(String status, AsyncHttpResponseHandler handler) {
+        String url = getApiUrl("statuses/update.json");
+        RequestParams parameters = new RequestParams();
+        parameters.put("status", status);
+        client.post(url, parameters, handler);
+    }
 }

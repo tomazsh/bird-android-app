@@ -35,7 +35,7 @@ public class TimelineAdapter extends ArrayAdapter<Tweet> {
         nameTextView.setText(tweet.getUser().getName());
 
         TextView screenNameTextView = (TextView)convertView.findViewById(R.id.screen_name_text_view);
-        screenNameTextView.setText(tweet.getUser().getScreenName());
+        screenNameTextView.setText(tweet.getUser().getStyledScreenName());
 
         TextView dateTextView = (TextView)convertView.findViewById(R.id.date_text_view);
         dateTextView.setText(RelativeDate.getString(tweet.getCreatedAt()));

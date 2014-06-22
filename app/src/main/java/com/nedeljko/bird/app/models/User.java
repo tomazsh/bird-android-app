@@ -3,13 +3,23 @@ package com.nedeljko.bird.app.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String mName;
     private String mProfileImageUrl;
     private int mRemoteId;
     private String mScreenName;
 
+    public User() {
+
+    }
+
     public User(JSONObject jsonObject) {
+        update(jsonObject);
+    }
+
+    public void update(JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("name");
             mProfileImageUrl = jsonObject.getString("profile_image_url").replace("normal", "bigger");
@@ -18,6 +28,10 @@ public class User {
         } catch (JSONException jsonException) {
             System.out.println("Exception creating User from JSON response: " + jsonException);
         }
+    }
+
+    public String getStyledScreenName() {
+        return "@" + mScreenName;
     }
 
     //region Getters and Setters
