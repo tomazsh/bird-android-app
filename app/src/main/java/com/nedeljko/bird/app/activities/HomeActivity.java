@@ -1,5 +1,6 @@
 package com.nedeljko.bird.app.activities;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.codepath.oauth.OAuthLoginActivity;
 import com.nedeljko.bird.app.adapter.TimelineAdapter;
 import com.nedeljko.bird.app.BirdApplication;
 import com.nedeljko.bird.app.R;
+import com.nedeljko.bird.app.dialogs.TweetComposeDialog;
 import com.nedeljko.bird.app.helpers.InfiniteScrollListener;
 import com.nedeljko.bird.app.helpers.TwitterClient;
 import com.nedeljko.bird.app.interfaces.TimelineViewModelListener;
@@ -22,7 +24,7 @@ import com.nedeljko.bird.app.viewmodels.HomeViewModel;
 
 public class HomeActivity
         extends OAuthLoginActivity<TwitterClient>
-        implements TimelineViewModelListener {
+        implements TimelineViewModelListener, TweetComposeDialog.TweetComposeListener {
     private HomeState mState = HomeState.DEFAULT;
     private HomeViewModel mHomeViewModel;
     private TimelineAdapter mTweetsAdapter;
@@ -59,12 +61,6 @@ public class HomeActivity
         mTweetsAdapter = new TimelineAdapter(this, mHomeViewModel.getTweets());
         mListView.setAdapter(mTweetsAdapter);
         mListView.addFooterView(mListFooterView);
-        mListView.setOnScrollListener(new InfiniteScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                mHomeViewModel.loadNextTimelinePage();
-            }
-        });
     }
 
     @Override
@@ -97,15 +93,21 @@ public class HomeActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.compose_action_item) {
-            composeTweet(null);
+            composeTweetInDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void composeTweet(Tweet tweet) {
+    public void composeTweet() {
         Intent intent = new Intent(HomeActivity.this, TweetComposeActivity.class);
         startActivityForResult(intent, TweetComposeActivity.COMPOSE_REQUEST_CODE);
+    }
+
+    public void composeTweetInDialog() {
+        FragmentManager manager = getFragmentManager();
+        TweetComposeDialog dialog = new TweetComposeDialog(this);
+        dialog.show(manager, "tweet_compose_dialog");
     }
 
     public void setState(HomeState state) {
@@ -177,7 +179,12 @@ public class HomeActivity
 
     @Override
     public void onLoginSuccess() {
-        mHomeViewModel.loadNextTimelinePage();
+        mListView.setOnScrollListener(new InfiniteScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                mHomeViewModel.loadNextTimelinePage();
+            }
+        });
     }
 
     @Override
@@ -207,6 +214,18 @@ public class HomeActivity
 
     public void onTimelineLoadFinish() {
         mTweetsAdapter.notifyDataSetChanged();
+    }
+
+    //endregion
+
+    //region TweetComposeListener
+
+    public void onTweetComposeSuccess(Tweet tweet) {
+
+    }
+
+    public void onTweetComposeFailure() {
+
     }
 
     //endregion

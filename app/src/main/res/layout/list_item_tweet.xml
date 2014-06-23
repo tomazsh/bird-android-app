@@ -67,5 +67,8 @@
         android:text="Tomaz"
         android:textSize="16sp"
         android:lineSpacingMultiplier="1.35"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:textColorLink="#808080"
         />
 </RelativeLayout>

@@ -19,6 +19,7 @@
     <string name="title_activity_tweet_compose">Compose New Tweet</string>
     <string name="tweet_action_title">Tweet</string>
 
+    <string name="post_action_title">Post</string>
     <string name="whats_on_your_mind_hint">What’s on your mind?</string>
     <string name="tweet_post_error_message">There was an error while trying to post your tweet.
         Please try again later.</string>
