@@ -63,6 +63,7 @@ public class TweetComposeViewModel {
 
     private void processTweetResponse(JSONObject jsonResponse) {
         mTweet.update(jsonResponse);
+        mTweet.save();
     }
 
     //endregion

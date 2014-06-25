@@ -6,4 +6,5 @@ public interface TimelineViewModelListener {
     void onTimelineLoadSuccess();
     void onTimelineLoadFailure();
     void onTimelineLoadFinish();
+    void onTimelineItemsChanged();
 }

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -82,15 +83,18 @@ public class TweetComposeDialog extends DialogFragment
     public void onStart() {
         super.onStart();
 
-        AlertDialog dialog = (AlertDialog)getDialog();
+        final AlertDialog dialog = (AlertDialog)getDialog();
         mPostButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         mPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mViewModel.getTweet().setText(mEditText.getText().toString());
                 mViewModel.postTweet();
+                dialog.dismiss();
             }
         });
+
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     public void setState(TweetComposeState state) {

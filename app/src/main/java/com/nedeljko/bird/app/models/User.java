@@ -1,21 +1,35 @@
 package com.nedeljko.bird.app.models;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class User implements Serializable {
+@Table(name = "Users")
+public class User extends Model implements Serializable {
+    @Column(name = "Name")
     private String mName;
+
+    @Column(name = "ProfileImageUrl")
     private String mProfileImageUrl;
+
+    @Column(name = "RemoteId", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private int mRemoteId;
+
+    @Column(name = "ScreenName")
     private String mScreenName;
 
     public User() {
-
+        super();
     }
 
     public User(JSONObject jsonObject) {
+        super();
         update(jsonObject);
     }
 
@@ -28,10 +42,15 @@ public class User implements Serializable {
         } catch (JSONException jsonException) {
             System.out.println("Exception creating User from JSON response: " + jsonException);
         }
+        save();
     }
 
     public String getStyledScreenName() {
         return "@" + mScreenName;
+    }
+
+    public List<Tweet> getTweets() {
+        return getMany(Tweet.class, "user");
     }
 
     //region Getters and Setters

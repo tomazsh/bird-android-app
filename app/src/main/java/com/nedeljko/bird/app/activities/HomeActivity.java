@@ -114,49 +114,46 @@ public class HomeActivity
         mState = state;
         switch (state) {
             case DEFAULT:
-                if (!mHomeViewModel.hasFinishedInitialLoad()) {
-                    mListView.setVisibility(View.VISIBLE);
-                    mEmptyView.setVisibility(View.GONE);
-                }
+                mListView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
                 break;
             case LOADING:
-                if (!mHomeViewModel.hasFinishedInitialLoad()) {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mListView.setVisibility(View.GONE);
-                    mEmptyView.setVisibility(View.GONE);
-                }
+                mProgressBar.setVisibility(View.VISIBLE);
+                mListView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
                 break;
             case NEEDS_LOGIN:
-                if (!mHomeViewModel.hasFinishedInitialLoad()) {
-                    mProgressBar.setVisibility(View.GONE);
-                    mListView.setVisibility(View.GONE);
-                    mEmptyView.setVisibility(View.VISIBLE);
-                }
+                mProgressBar.setVisibility(View.GONE);
+                mListView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
                 mEmptyTitleTextView.setText(R.string.login_required_title);
                 mEmptyMessageTextView.setText(R.string.login_required_message);
                 mEmptyActionButton.setText(R.string.login_action_title);
                 mEmptyActionButton.setVisibility(View.VISIBLE);
                 break;
             case NO_TWEETS:
-                if (!mHomeViewModel.hasFinishedInitialLoad()) {
-                    mProgressBar.setVisibility(View.GONE);
-                    mListView.setVisibility(View.GONE);
-                    mEmptyView.setVisibility(View.VISIBLE);
-                }
+                mProgressBar.setVisibility(View.GONE);
+                mListView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
                 mEmptyTitleTextView.setText(R.string.no_tweets_title);
                 mEmptyMessageTextView.setText(R.string.no_tweets_message);
                 mEmptyActionButton.setText(R.string.try_again_action_title);
                 break;
             case NETWORK_ERROR:
-                if (!mHomeViewModel.hasFinishedInitialLoad()) {
-                    mProgressBar.setVisibility(View.GONE);
-                    mListView.setVisibility(View.GONE);
-                    mEmptyView.setVisibility(View.VISIBLE);
-                }
+                mProgressBar.setVisibility(View.GONE);
+                mListView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
                 mEmptyTitleTextView.setText(R.string.network_error_title);
                 mEmptyMessageTextView.setText(R.string.network_error_message);
                 mEmptyActionButton.setText(R.string.try_again_action_title);
                 break;
+        }
+
+        if (mHomeViewModel.hasLocalTweets() || mHomeViewModel.hasFinishedInitialLoad()) {
+            mState = HomeState.DEFAULT;
+            mProgressBar.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
         }
     }
 
@@ -170,7 +167,7 @@ public class HomeActivity
                 break;
             case NO_TWEETS:
             case NETWORK_ERROR:
-                mHomeViewModel.loadNextTimelinePage();
+                mHomeViewModel.loadTimeline();
                 break;
         }
     }
@@ -179,6 +176,7 @@ public class HomeActivity
 
     @Override
     public void onLoginSuccess() {
+        mHomeViewModel.loadTimeline();
         mListView.setOnScrollListener(new InfiniteScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
@@ -205,15 +203,26 @@ public class HomeActivity
     }
 
     public void onTimelineLoadSuccess() {
-        setState(HomeState.DEFAULT);
+
     }
 
     public void onTimelineLoadFailure() {
-        setState(HomeState.NETWORK_ERROR);
+
     }
 
     public void onTimelineLoadFinish() {
+        if (!mHomeViewModel.hasFinishedInitialLoad()) {
+            mHomeViewModel.fetchLocalTweets();
+        }
+    }
+
+    public void onTimelineItemsChanged() {
         mTweetsAdapter.notifyDataSetChanged();
+        if (mHomeViewModel.hasLocalTweets() || mHomeViewModel.hasFinishedInitialLoad()) {
+            setState(HomeState.DEFAULT);
+        } else {
+            setState(HomeState.NETWORK_ERROR);
+        }
     }
 
     //endregion
@@ -221,7 +230,8 @@ public class HomeActivity
     //region TweetComposeListener
 
     public void onTweetComposeSuccess(Tweet tweet) {
-
+        mHomeViewModel.insertTweet(tweet);
+        mListView.setSelectionAfterHeaderView();
     }
 
     public void onTweetComposeFailure() {

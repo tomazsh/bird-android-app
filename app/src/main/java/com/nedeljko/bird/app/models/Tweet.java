@@ -1,5 +1,9 @@
 package com.nedeljko.bird.app.models;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,17 +13,26 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Tweet implements Serializable {
+@Table(name = "Tweets")
+public class Tweet extends Model implements Serializable {
+    @Column(name = "CreatedAt")
     private Date mCreatedAt;
+
+    @Column(name = "RemoteId", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private int mRemoteId;
+
+    @Column(name = "Text")
     private String mText;
+
+    @Column(name = "User", onDelete = Column.ForeignKeyAction.CASCADE)
     private User mUser;
 
     public Tweet() {
-
+        super();
     }
 
     public Tweet(JSONObject jsonObject) {
+        super();
         update(jsonObject);
     }
 
@@ -46,6 +59,7 @@ public class Tweet implements Serializable {
         } catch (JSONException jsonException) {
             jsonException.printStackTrace();
         }
+        save();
     }
 
     //region Getters and Setters
