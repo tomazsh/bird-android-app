@@ -22,14 +22,18 @@ public class TimelineAdapter extends ArrayAdapter<Tweet> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Tweet tweet = getItem(position);
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.list_item_tweet, parent, false);
         }
 
+        convertView.setTag(Integer.toString(position));
+
         SmartImageView avatarView = (SmartImageView)convertView.findViewById(R.id.avatar_view);
         avatarView.setImage(null);
         avatarView.setImageUrl(tweet.getUser().getProfileImageUrl());
+        avatarView.setTag(tweet.getUser());
 
         TextView nameTextView = (TextView)convertView.findViewById(R.id.name_text_view);
         nameTextView.setText(tweet.getUser().getName());

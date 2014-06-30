@@ -13,7 +13,8 @@
         android:id="@+id/avatar_view"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:background="#b0b0b0" />
+        android:background="#b0b0b0"
+        android:onClick="onAvatarViewClick" />
     <TextView
         android:id="@+id/name_text_view"
         android:layout_width="wrap_content"

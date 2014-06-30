@@ -1,47 +1,35 @@
 package com.nedeljko.bird.app.activities;
 
+import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.codepath.oauth.OAuthLoginActivity;
-import com.nedeljko.bird.app.adapter.TimelineAdapter;
-import com.nedeljko.bird.app.BirdApplication;
 import com.nedeljko.bird.app.R;
 import com.nedeljko.bird.app.dialogs.TweetComposeDialog;
-import com.nedeljko.bird.app.helpers.InfiniteScrollListener;
+import com.nedeljko.bird.app.fragments.HomeFragment;
+import com.nedeljko.bird.app.fragments.MentionsFragment;
+import com.nedeljko.bird.app.fragments.TimelineFragment;
 import com.nedeljko.bird.app.helpers.TwitterClient;
-import com.nedeljko.bird.app.interfaces.TimelineViewModelListener;
+import com.nedeljko.bird.app.helpers.FragmentTabListener;
 import com.nedeljko.bird.app.models.Tweet;
-import com.nedeljko.bird.app.viewmodels.HomeViewModel;
+import com.nedeljko.bird.app.models.User;
 
 public class HomeActivity
         extends OAuthLoginActivity<TwitterClient>
-        implements TimelineViewModelListener, TweetComposeDialog.TweetComposeListener {
-    private HomeState mState = HomeState.DEFAULT;
-    private HomeViewModel mHomeViewModel;
-    private TimelineAdapter mTweetsAdapter;
-    private ListView mListView;
-    private View mListFooterView;
-    private ProgressBar mProgressBar;
+        implements TweetComposeDialog.TweetComposeListener {
+    private HomeState mState = HomeState.NEEDS_LOGIN;
+    private View mTabContainer;
     private View mEmptyView;
-    private TextView mEmptyTitleTextView;
-    private TextView mEmptyMessageTextView;
-    private TextView mEmptyActionButton;
+    private boolean mHasTabs = false;
 
     private enum HomeState {
         DEFAULT,
-        LOADING,
-        NEEDS_LOGIN,
-        NO_TWEETS,
-        NETWORK_ERROR
+        NEEDS_LOGIN
     }
 
     @Override
@@ -49,18 +37,33 @@ public class HomeActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        mListView = (ListView)findViewById(R.id.list_view);
-        mListFooterView = (View)LayoutInflater.from(this).inflate(R.layout.footer_progress_indicator, null);
-        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+        mTabContainer = findViewById(R.id.tab_container);
         mEmptyView = findViewById(R.id.empty);
-        mEmptyTitleTextView = (TextView)findViewById(R.id.empty_title_text_view);
-        mEmptyMessageTextView = (TextView)findViewById(R.id.empty_message_text_view);
-        mEmptyActionButton = (TextView)findViewById(R.id.empty_action_button);
+    }
 
-        mHomeViewModel = new HomeViewModel(BirdApplication.getTwitterClient(), this);
-        mTweetsAdapter = new TimelineAdapter(this, mHomeViewModel.getTweets());
-        mListView.setAdapter(mTweetsAdapter);
-        mListView.addFooterView(mListFooterView);
+    private void setupTabs() {
+        if (mHasTabs) {
+            return;
+        }
+        mHasTabs = true;
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayShowTitleEnabled(true);
+
+        ActionBar.Tab tab1 = actionBar.newTab().setText(R.string.home_tab_title)
+                .setTag("HomeFragment").setTabListener(
+                        new FragmentTabListener<HomeFragment>(R.id.tab_container, this,
+                                "HomeFragment", HomeFragment.class));
+        actionBar.addTab(tab1);
+        actionBar.selectTab(tab1);
+
+        ActionBar.Tab tab2 = actionBar.newTab().setText(R.string.mentions_tab_title)
+                .setTag("MentionsFragment").setTabListener(
+                        new FragmentTabListener<MentionsFragment>(R.id.tab_container, this,
+                                "MentionsFragment", MentionsFragment.class)
+                );
+        actionBar.addTab(tab2);
     }
 
     @Override
@@ -79,7 +82,7 @@ public class HomeActivity
 
         if (resultCode == RESULT_OK && requestCode == TweetComposeActivity.COMPOSE_REQUEST_CODE) {
             Tweet tweet = (Tweet)data.getExtras().getSerializable("tweet");
-            mHomeViewModel.insertTweet(tweet);
+            //mHomeFragment.getViewModel().insertTweet(tweet);
         }
     }
 
@@ -95,13 +98,36 @@ public class HomeActivity
         if (id == R.id.compose_action_item) {
             composeTweetInDialog();
             return true;
+        } else if (id == R.id.profile_action_item) {
+            viewProfile(null);
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setState(HomeState state) {
+        mState = state;
+        switch (state) {
+            case DEFAULT:
+                mTabContainer.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
+                break;
+            case NEEDS_LOGIN:
+                mTabContainer.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     public void composeTweet() {
         Intent intent = new Intent(HomeActivity.this, TweetComposeActivity.class);
         startActivityForResult(intent, TweetComposeActivity.COMPOSE_REQUEST_CODE);
+    }
+
+    public void viewProfile(User user) {
+        Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
     public void composeTweetInDialog() {
@@ -110,79 +136,16 @@ public class HomeActivity
         dialog.show(manager, "tweet_compose_dialog");
     }
 
-    public void setState(HomeState state) {
-        mState = state;
-        switch (state) {
-            case DEFAULT:
-                mListView.setVisibility(View.VISIBLE);
-                mEmptyView.setVisibility(View.GONE);
-                break;
-            case LOADING:
-                mProgressBar.setVisibility(View.VISIBLE);
-                mListView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.GONE);
-                break;
-            case NEEDS_LOGIN:
-                mProgressBar.setVisibility(View.GONE);
-                mListView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyTitleTextView.setText(R.string.login_required_title);
-                mEmptyMessageTextView.setText(R.string.login_required_message);
-                mEmptyActionButton.setText(R.string.login_action_title);
-                mEmptyActionButton.setVisibility(View.VISIBLE);
-                break;
-            case NO_TWEETS:
-                mProgressBar.setVisibility(View.GONE);
-                mListView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyTitleTextView.setText(R.string.no_tweets_title);
-                mEmptyMessageTextView.setText(R.string.no_tweets_message);
-                mEmptyActionButton.setText(R.string.try_again_action_title);
-                break;
-            case NETWORK_ERROR:
-                mProgressBar.setVisibility(View.GONE);
-                mListView.setVisibility(View.GONE);
-                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyTitleTextView.setText(R.string.network_error_title);
-                mEmptyMessageTextView.setText(R.string.network_error_message);
-                mEmptyActionButton.setText(R.string.try_again_action_title);
-                break;
-        }
-
-        if (mHomeViewModel.hasLocalTweets() || mHomeViewModel.hasFinishedInitialLoad()) {
-            mState = HomeState.DEFAULT;
-            mProgressBar.setVisibility(View.GONE);
-            mListView.setVisibility(View.VISIBLE);
-            mEmptyView.setVisibility(View.GONE);
-        }
-    }
-
     public void onEmptyButtonClick(View v) {
-        switch (mState) {
-            case DEFAULT:
-            case LOADING:
-                break;
-            case NEEDS_LOGIN:
-                getClient().connect();
-                break;
-            case NO_TWEETS:
-            case NETWORK_ERROR:
-                mHomeViewModel.loadTimeline();
-                break;
-        }
+        getClient().connect();
     }
 
     //region OAuthAccessHandler
 
     @Override
     public void onLoginSuccess() {
-        mHomeViewModel.loadTimeline();
-        mListView.setOnScrollListener(new InfiniteScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                mHomeViewModel.loadNextTimelinePage();
-            }
-        });
+        setupTabs();
+        setState(HomeState.DEFAULT);
     }
 
     @Override
@@ -192,50 +155,24 @@ public class HomeActivity
 
     //endregion
 
-    //region TimelineViewModelListener
-
-    public void onTimelineLoadStart() {
-        setState(HomeState.LOADING);
-    }
-
-    public void onTimelineLoadProgress(int progress) {
-        mProgressBar.setProgress(progress);
-    }
-
-    public void onTimelineLoadSuccess() {
-
-    }
-
-    public void onTimelineLoadFailure() {
-
-    }
-
-    public void onTimelineLoadFinish() {
-        if (!mHomeViewModel.hasFinishedInitialLoad()) {
-            mHomeViewModel.fetchLocalTweets();
-        }
-    }
-
-    public void onTimelineItemsChanged() {
-        mTweetsAdapter.notifyDataSetChanged();
-        if (mHomeViewModel.hasLocalTweets() || mHomeViewModel.hasFinishedInitialLoad()) {
-            setState(HomeState.DEFAULT);
-        } else {
-            setState(HomeState.NETWORK_ERROR);
-        }
-    }
-
-    //endregion
-
     //region TweetComposeListener
 
     public void onTweetComposeSuccess(Tweet tweet) {
-        mHomeViewModel.insertTweet(tweet);
-        mListView.setSelectionAfterHeaderView();
+        //mHomeFragment.getViewModel().insertTweet(tweet);
+        //mListView.setSelectionAfterHeaderView();
     }
 
     public void onTweetComposeFailure() {
 
+    }
+
+    //endregion
+
+    //region TimelineFragmentListener
+
+    public void onAvatarViewClick(View view) {
+        User user = (User)view.getTag();
+        viewProfile(user);
     }
 
     //endregion

@@ -19,7 +19,7 @@ public class Tweet extends Model implements Serializable {
     private Date mCreatedAt;
 
     @Column(name = "RemoteId", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
-    private int mRemoteId;
+    private long mRemoteId;
 
     @Column(name = "Text")
     private String mText;
@@ -47,7 +47,7 @@ public class Tweet extends Model implements Serializable {
                 parseException.printStackTrace();
             }
 
-            mRemoteId = jsonObject.getInt("id");
+            mRemoteId = jsonObject.getLong("id");
             mText = jsonObject.getString("text");
 
             JSONObject userObject = jsonObject.getJSONObject("user");
@@ -64,11 +64,11 @@ public class Tweet extends Model implements Serializable {
 
     //region Getters and Setters
 
-    public int getRemoteId() {
+    public long getRemoteId() {
         return mRemoteId;
     }
 
-    public void setRemoteId(int remoteId) {
+    public void setRemoteId(long remoteId) {
         mRemoteId = remoteId;
     }
 

@@ -7,4 +7,10 @@
           android:icon="@android:drawable/ic_menu_edit"
           android:orderInCategory="100"
           android:showAsAction="ifRoom" />
+
+    <item android:id="@+id/profile_action_item"
+          android:title="@string/profile_action_title"
+          android:icon="@android:drawable/ic_menu_view"
+          android:orderInCategory="102"
+          android:showAsAction="ifRoom" />
 </menu>

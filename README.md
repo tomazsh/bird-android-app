@@ -3,15 +3,18 @@ Bird
 
 Bird is an Android Twitter client in development and was started as an assignment for CodePath bootcamp.
 
-<img src="screen.png" alt="Bird for Android" title"Bird Android Twitter client" width="300" height="533" />&nbsp;<img src="demo.gif" alt="Bird for Android" title"Bird Android Twitter client" width="300" height="533" />
+<img src="screen.png" alt="Bird for Android" title"Bird Android Twitter client" width="300" height="533" />&nbsp;<img src="demo.gif" alt="Bird for Android" title"Bird Android Twitter client" width="300" height="533" />&nbsp;<img src="demo2.gif" alt="Bird for Android" title"Bird Android Twitter client" width="300" height="533" />
 
 Features
 --------
 
 Bird currently provides the following functionality:
 * List most recent tweets in your timeline
+* List tweets you were mentioned in
 * Persist fetched tweets for viewing them offline
 * Compose a new tweet in a dialog
+* See your own profile
+* Browse other people’s profiles
 
 Building
 --------

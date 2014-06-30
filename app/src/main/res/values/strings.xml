@@ -3,7 +3,12 @@
 
     <string name="app_name">Bird</string>
     <string name="compose_action_title">Compose new Tweet</string>
+    <string name="profile_action_title">Profile</string>
     <string name="title_activity_home">Home</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="home_tab_title">Home</string>\>
+    <string name="mentions_tab_title">Mentions</string>\>
+
     <string name="login_required_title">Sign in to Twitter</string>
     <string name="login_required_message">In order to user Bird, you have to sign in to Twitter.
         Bird will never store your password.</string>

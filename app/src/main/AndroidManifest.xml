@@ -3,6 +3,9 @@
     package="com.nedeljko.bird.app" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
 
     <application
         android:name="com.nedeljko.bird.app.BirdApplication"
@@ -38,6 +41,11 @@
         <activity
             android:name="com.nedeljko.bird.app.activities.TweetComposeActivity"
             android:label="@string/title_activity_tweet_compose"
+            android:parentActivityName="com.nedeljko.bird.app.activities.HomeActivity" >
+        </activity>
+        <activity
+            android:name="com.nedeljko.bird.app.activities.ProfileActivity"
+            android:label="@string/title_activity_profile"
             android:parentActivityName="com.nedeljko.bird.app.activities.HomeActivity" >
         </activity>
     </application>

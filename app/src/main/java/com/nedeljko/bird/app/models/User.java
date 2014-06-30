@@ -19,10 +19,19 @@ public class User extends Model implements Serializable {
     private String mProfileImageUrl;
 
     @Column(name = "RemoteId", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
-    private int mRemoteId;
+    private long mRemoteId;
 
     @Column(name = "ScreenName")
     private String mScreenName;
+
+    @Column(name = "TweetCount")
+    private int mTweetCount;
+
+    @Column(name = "FollowingsCount")
+    private int mFollowingsCount;
+
+    @Column(name = "FollowersCount")
+    private int mFollowersCount;
 
     public User() {
         super();
@@ -37,8 +46,11 @@ public class User extends Model implements Serializable {
         try {
             mName = jsonObject.getString("name");
             mProfileImageUrl = jsonObject.getString("profile_image_url").replace("normal", "bigger");
-            mRemoteId = jsonObject.getInt("id");
+            mRemoteId = jsonObject.getLong("id");
             mScreenName = jsonObject.getString("screen_name");
+            mTweetCount =  Integer.parseInt(jsonObject.getString("statuses_count"));
+            mFollowingsCount = Integer.parseInt(jsonObject.getString("friends_count"));
+            mFollowersCount = Integer.parseInt(jsonObject.getString("followers_count"));
         } catch (JSONException jsonException) {
             System.out.println("Exception creating User from JSON response: " + jsonException);
         }
@@ -71,11 +83,11 @@ public class User extends Model implements Serializable {
         mProfileImageUrl = profileImageUrl;
     }
 
-    public int getRemoteId() {
+    public long getRemoteId() {
         return mRemoteId;
     }
 
-    public void setRemoteId(int remoteId) {
+    public void setRemoteId(long remoteId) {
         mRemoteId = remoteId;
     }
 
@@ -85,6 +97,30 @@ public class User extends Model implements Serializable {
 
     public void setScreenName(String screenName) {
         mScreenName = screenName;
+    }
+
+    public int getTweetCount() {
+        return mTweetCount;
+    }
+
+    public void setTweetCount(int tweetCount) {
+        mTweetCount = tweetCount;
+    }
+
+    public int getFollowingsCount() {
+        return mFollowingsCount;
+    }
+
+    public void setFollowingsCount(int followingsCount) {
+        mFollowingsCount = followingsCount;
+    }
+
+    public int getFollowersCount() {
+        return mFollowersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        mFollowersCount = followersCount;
     }
 
     //endregion
